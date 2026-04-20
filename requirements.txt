@@ -1,0 +1,6 @@
+chromadb==0.6.3
+fastapi
+uvicorn
+langgraph
+langchain-groq
+python-dotenv

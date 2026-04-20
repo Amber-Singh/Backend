@@ -1,0 +1,266 @@
+{
+  "test_cases": [
+    {
+      "test_id": "C_001",
+      "test_name": "Successful Login with Valid Credentials",
+      "category": "Happy Path",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "expected_status": 200,
+      "request_body": {
+        "username": "john.doe@example.com",
+        "password": "SecurePass@123",
+        "rememberMe": false
+      },
+      "expected_response": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJleHAiOjE3MDAwMDAwMDB9.example",
+        "userId": 1,
+        "username": "john.doe@example.com",
+        "expiresIn": 3600
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_002",
+      "test_name": "Successful Login with Valid Credentials and Remember Me",
+      "category": "Happy Path",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "expected_status": 200,
+      "request_body": {
+        "username": "jane.smith@example.com",
+        "password": "MySecureP@ssw0rd",
+        "rememberMe": true
+      },
+      "expected_response": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoiamFuZS5zbWl0aEBleGFtcGxlLmNvbSIsImV4cCI6MTczMDAwMDAwMH0.example",
+        "userId": 2,
+        "username": "jane.smith@example.com",
+        "expiresIn": 604800,
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh.example"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0",
+        "X-Device-ID": "mobile-ios-12345"
+      }
+    },
+    {
+      "test_id": "C_003",
+      "test_name": "Login with Invalid Password",
+      "category": "Negative Path",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "expected_status": 401,
+      "request_body": {
+        "username": "john.doe@example.com",
+        "password": "WrongPassword123",
+        "rememberMe": false
+      },
+      "expected_response": {
+        "error": "Invalid credentials",
+        "code": "AUTH_001",
+        "message": "Username or password is incorrect"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_004",
+      "test_name": "Login with Non-existent Username",
+      "category": "Negative Path",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "expected_status": 404,
+      "request_body": {
+        "username": "nonexistent.user@example.com",
+        "password": "AnyPassword123",
+        "rememberMe": false
+      },
+      "expected_response": {
+        "error": "User not found",
+        "code": "AUTH_002",
+        "message": "No account found with this email address"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_005",
+      "test_name": "Login with Empty Username",
+      "category": "Validation Error",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "expected_status": 400,
+      "request_body": {
+        "username": "",
+        "password": "SecurePass@123",
+        "rememberMe": false
+      },
+      "expected_response": {
+        "error": "Validation failed",
+        "code": "VAL_001",
+        "message": "Username is required",
+        "field": "username"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_006",
+      "test_name": "Login with Empty Password",
+      "category": "Validation Error",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/login",
+      "expected_status": 400,
+      "request_body": {
+        "username": "john.doe@example.com",
+        "password": "",
+        "rememberMe": false
+      },
+      "expected_response": {
+        "error": "Validation failed",
+        "code": "VAL_002",
+        "message": "Password is required",
+        "field": "password"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_007",
+      "test_name": "Get User Profile After Login",
+      "category": "Happy Path",
+      "method": "GET",
+      "endpoint": "/api/v1/user/profile",
+      "expected_status": 200,
+      "request_body": {},
+      "expected_response": {
+        "userId": 1,
+        "username": "john.doe@example.com",
+        "fullName": "John Doe",
+        "email": "john.doe@example.com",
+        "phone": "+1234567890",
+        "role": "user",
+        "createdAt": "2024-01-15T10:30:00Z",
+        "lastLogin": "2024-02-20T15:45:00Z"
+      },
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJleHAiOjE3MDAwMDAwMDB9.example",
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_008",
+      "test_name": "Update User Profile",
+      "category": "Happy Path",
+      "method": "PUT",
+      "endpoint": "/api/v1/user/profile",
+      "expected_status": 200,
+      "request_body": {
+        "fullName": "Johnathan Doe",
+        "phone": "+1987654321",
+        "preferences": {
+          "language": "en-US",
+          "timezone": "America/New_York",
+          "notifications": true
+        }
+      },
+      "expected_response": {
+        "userId": 1,
+        "username": "john.doe@example.com",
+        "fullName": "Johnathan Doe",
+        "email": "john.doe@example.com",
+        "phone": "+1987654321",
+        "preferences": {
+          "language": "en-US",
+          "timezone": "America/New_York",
+          "notifications": true
+        },
+        "updatedAt": "2024-02-20T16:00:00Z"
+      },
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJleHAiOjE3MDAwMDAwMDB9.example",
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_009",
+      "test_name": "Create New Order",
+      "category": "Happy Path",
+      "method": "POST",
+      "endpoint": "/api/v1/orders",
+      "expected_status": 201,
+      "request_body": {
+        "userId": 1,
+        "items": [
+          {
+            "productId": "P1001",
+            "name": "Wireless Headphones",
+            "quantity": 2,
+            "price": 79.99
+          },
+          {
+            "productId": "P1002",
+            "name": "USB-C Cable",
+            "quantity": 3,
+            "price": 12.99
+          }
+        ],
+        "shippingAddress": {
+          "street": "123 Main Street",
+          "city": "New York",
+          "state": "NY",
+          "zipCode": "10001",
+          "country": "USA"
+        },
+        "paymentMethod": "credit_card"
+      },
+      "expected_response": {
+        "orderId": "ORD_20240220_001",
+        "userId": 1,
+        "status": "confirmed",
+        "totalAmount": 198.95,
+        "createdAt": "2024-02-20T16:15:00Z",
+        "estimatedDelivery": "2024-02-25T00:00:00Z"
+      },
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJleHAiOjE3MDAwMDAwMDB9.example",
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    },
+    {
+      "test_id": "C_010",
+      "test_name": "Get Order Details with Invalid Order ID",
+      "category": "Negative Path",
+      "method": "GET",
+      "endpoint": "/api/v1/orders/INVALID_ID",
+      "expected_status": 404,
+      "request_body": {},
+      "expected_response": {
+        "error": "Order not found",
+        "code": "ORD_001",
+        "message": "No order found with ID: INVALID_ID"
+      },
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJleHAiOjE3MDAwMDAwMDB9.example",
+        "Content-Type": "application/json",
+        "User-Agent": "API-Test-Client/1.0"
+      }
+    }
+  ]
+}
