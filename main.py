@@ -2,13 +2,22 @@ from fastapi import FastAPI
 from database import get_all, get_one ,db , add_tests
 from models import TestCase
 from agents import agent
-import json 
+from fastapi.responses import FileResponse
+import json, os
 
 app = FastAPI()
 
 @app.get("/tests/all")
 def all_tests():
     return get_all()
+
+@app.get("/tests/export")
+def export_tests():
+    result = get_all()
+    with open("exported_tests.json", "w") as f:
+        json.dump(result, f, indent=2)
+    return FileResponse("exported_tests.json", media_type="application/json", filename="exported_tests.json")
+
 
 @app.get("/tests/{test_id}")
 def one_test(test_id: str):
@@ -35,5 +44,20 @@ def tests_by_Category(category: str):
     return [
         {"id":i, "name":d , **m } for i,d,m in zip(result["ids"], result["documents"], result["metadatas"])
     ]
+
+@app.put("/tests/{test_id}")
+def update_test(test_id: str, test: TestCase):
+    # Delete old test
+    db.delete(where={"test_id": test_id})
+    # Add updated test
+    add_tests([test.model_dump()])
+    return {"message": f"Test updated: {test_id}"}
     
-    
+@app.get("/tests/search/{query}")
+def search_tests(query: str, int =3):
+    result = db.query(query_texts=[query], n_results=int)
+    return [
+        {"id":i, "name":d , **m , "distance": dist} for i,d,m,dist in zip(result["ids"][0], 
+        result["documents"][0], result["metadatas"][0], result["distances"][0])
+    ]
+
