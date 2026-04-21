@@ -73,8 +73,4 @@ graph.add_edge("load_tests", "generate_tests")
 graph.add_edge("generate_tests", "save_tests")      
 graph.add_edge("save_tests", END)
 
-app = graph.compile()
-
-if __name__ == "__main__":
-    result = app.invoke({"existing_tests": [], "generated_tests": []})
-    print(json.dumps(result["generated_tests"], indent=2))
+agent = graph.compile()

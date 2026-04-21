@@ -30,7 +30,8 @@ def add_tests(tests):
         for i, chunk in enumerate(chunk_test(test)):
             ids.append(f"{test['test_id']}_{i}")
             documents.append(chunk)
-            metadatas.append({"category": test["category"], "method": test["method"]})
+            metadatas.append({"category": test["category"], "method": test["method"], 
+                              "test_id": test["test_id"]})
     db.add(ids=ids, documents=documents, metadatas=metadatas)
     
 # ── Store with chunking
@@ -51,8 +52,8 @@ def get_one(test_id):
     return {"id": r["ids"][0], "name": r["documents"][0], **r["metadatas"][0]}
 
 
-results = db.query(query_texts=["validation error 400"], n_results=3)
-print("Search results for 'validation error 400':",json.dumps(results, indent=2))    
+#results = db.query(query_texts=["validation error 400"], n_results=3)
+#print("Search results for 'validation error 400':",json.dumps(results, indent=2))    
 
 #print(json.dumps(get_all(), indent=2))
 #print(json.dumps(db.get(), indent=2))
