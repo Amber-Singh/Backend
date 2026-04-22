@@ -23,7 +23,7 @@ GUIDELINES = """
 
 def review_file(filepath):
     # Read file
-    with open(filepath, "r", encoding='utf-8') as f:
+    with open(filepath, "r") as f:
         code = f.read()
     
     print(f"✅ File read: {len(code.splitlines())} lines")
@@ -33,15 +33,17 @@ def review_file(filepath):
 
         Code:
         {code}
-
+        
         Provide a detailed review with:
-        1. Issues found (with line numbers)
-        2. Severity (High/Medium/Low)
-        3. Suggestion to fix"""
+        1. Overall Score (out of 10)
+        2. Issues found (with line numbers)
+        3. Severity (High/Medium/Low)
+        4. Suggestion to fix
+        5. Summary of improvements needed"""
 
     response = llm.invoke(prompt)
     return response.content
 
 
 if __name__ == "__main__":
-    print(review_file("test.py"))
+    print(review_file("rag.py"))
