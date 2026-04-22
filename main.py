@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from database import get_all, get_one ,db , add_tests
-from models import TestCase
+from models import TestCase , TextInput
 from agents import agent
 from fastapi.responses import FileResponse
+from text_agent import generate_from_text
 import json, os
 
 app = FastAPI()
@@ -17,7 +18,6 @@ def export_tests():
     with open("exported_tests.json", "w") as f:
         json.dump(result, f, indent=2)
     return FileResponse("exported_tests.json", media_type="application/json", filename="exported_tests.json")
-
 
 @app.get("/tests/{test_id}")
 def one_test(test_id: str):
@@ -61,3 +61,6 @@ def search_tests(query: str, int =3):
         result["documents"][0], result["metadatas"][0], result["distances"][0])
     ]
 
+@app.post("/tests/generate-from-text")
+def generate_from_text_endpoint(input:TextInput):
+    return generate_from_text(input.text)

@@ -10,3 +10,7 @@ class TestCase(BaseModel):
     request_body: dict = {}
     expected_response: dict = {}
     headers: dict = {}
+    
+    
+class TextInput(BaseModel):
+    text: str
