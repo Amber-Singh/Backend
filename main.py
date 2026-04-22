@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from database import get_all, get_one ,db , add_tests
-from models import TestCase , TextInput
+from models import TestCase , TextInput , Question
 from agents import agent
 from fastapi.responses import FileResponse
 from text_agent import generate_from_text
+from rag import ask
 import json, os
 
 app = FastAPI()
@@ -64,3 +65,8 @@ def search_tests(query: str, int =3):
 @app.post("/tests/generate-from-text")
 def generate_from_text_endpoint(input:TextInput):
     return generate_from_text(input.text)
+
+
+@app.post("/tests/ask")
+def ask_endpoint(question: Question):
+    return ask(question)

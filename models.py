@@ -14,3 +14,8 @@ class TestCase(BaseModel):
     
 class TextInput(BaseModel):
     text: str
+    
+class Question(BaseModel):
+    question: str
+    
+    
