@@ -70,3 +70,5 @@ def generate_from_text_endpoint(input:TextInput):
 @app.post("/tests/ask")
 def ask_endpoint(question: Question):
     return ask(question)
+
+#python -m uvicorn main:app --reload
