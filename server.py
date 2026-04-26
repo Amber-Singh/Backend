@@ -2,7 +2,7 @@ from mcp.server.fastmcp import FastMCP
 import httpx
 
 # Your FastAPI app runs on this URL
-API_BASE = "http://localhost:8000"
+API_BASE = "http://main-app:8000"
 
 # Create the MCP server
 mcp = FastMCP("Test Cases Server")

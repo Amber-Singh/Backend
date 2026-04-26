@@ -4,3 +4,5 @@ uvicorn
 langgraph
 langchain-groq
 python-dotenv
+kafka-python==2.0.2
+mcp

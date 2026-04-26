@@ -28,8 +28,13 @@ async def run_mcp(prompt: str, job_id: str = None):
             ])
             if response.tool_calls:
                 tool = response.tool_calls[0]
-                result = await session.call_tool(tool["name"], tool["args"])
-                return {"job_id": job_id, "prompt": prompt, "tool_used": tool["name"], "result": json.loads(result.content[0].text)}
+                result = await session.call_tool(tool["name"], tool["args"])  #
+                raw = result.content[0].text
+                try:
+                    parsed = json.loads(raw)
+                except:
+                    parsed = raw  # return as plain text if not JSON
+                return {"job_id": job_id, "prompt": prompt, "tool_used": tool["name"], "result": parsed}
             return {"job_id": job_id, "prompt": prompt, "answer": response.content}
 
 @app.post("/ask")

@@ -9,10 +9,11 @@ load_dotenv()
 
 app = FastAPI()
 
-producer = KafkaProducer(
-    bootstrap_servers="localhost:9092",
-    value_serializer=lambda v: json.dumps(v).encode("utf-8")
-)
+def get_producer():
+    return KafkaProducer(
+        bootstrap_servers="kafka:9092",
+        value_serializer=lambda v: json.dumps(v).encode("utf-8")
+    )
 
 class Query(BaseModel):
     prompt: str
@@ -21,16 +22,17 @@ class Query(BaseModel):
 @app.post("/ask")
 def ask(query: Query):
     job_id = str(uuid.uuid4())  # generate unique job id
-    producer.send("test-requests", {"job_id": job_id, "prompt": query.prompt})
-    producer.flush()
+    p = get_producer()
+    p.send("test-requests", {"job_id": job_id, "prompt": query.prompt})
+    p.flush()
     return {"job_id": job_id, "message": "Request received! Use job_id to get result."}
 
 # Step 2 - User polls /result/{job_id} to get result
 @app.get("/result/{job_id}")
 def get_result(job_id: str):
     c = KC(
-        "test-responses",
-        bootstrap_servers="localhost:9092",
+        "test-responses",      
+        bootstrap_servers="kafka:9092",
         auto_offset_reset="earliest",
         consumer_timeout_ms=3000,  # wait max 3 seconds
         value_deserializer=lambda v: json.loads(v.decode("utf-8"))
