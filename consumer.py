@@ -1,11 +1,23 @@
 import os, asyncio, json, time
 from kafka import KafkaConsumer, KafkaProducer
 from mcp_handler import run_mcp  # ← import shared logic
+from dotenv import load_dotenv
 
-consumer = KafkaConsumer("test-requests", bootstrap_servers="kafka:9092",  auto_offset_reset="earliest",  
-                         value_deserializer=lambda v: json.loads(v.decode("utf-8")))
-producer = KafkaProducer(bootstrap_servers="kafka:9092", 
-                         value_serializer=lambda v: json.dumps(v).encode("utf-8"))
+load_dotenv() 
+
+KAFKA_CONFIG = {
+    "bootstrap_servers": os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
+    "security_protocol": "SASL_SSL",
+    "sasl_mechanism": "SCRAM-SHA-256",
+    "sasl_plain_username": os.getenv("KAFKA_USERNAME"),
+    "sasl_plain_password": os.getenv("KAFKA_PASSWORD"),
+}
+
+consumer = KafkaConsumer("test-requests", **KAFKA_CONFIG,
+                        auto_offset_reset="earliest",
+                        value_deserializer=lambda v: json.loads(v.decode("utf-8")))
+producer = KafkaProducer( **KAFKA_CONFIG,
+                        value_serializer=lambda v: json.dumps(v).encode("utf-8"))
 
 print("✅ Consumer started! Waiting for messages...")
 for message in consumer:

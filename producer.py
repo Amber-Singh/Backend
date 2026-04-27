@@ -11,7 +11,11 @@ app = FastAPI()
 
 def get_producer():
     return KafkaProducer(
-        bootstrap_servers="kafka:9092",
+        bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
+        security_protocol="SASL_SSL",
+        sasl_mechanism="SCRAM-SHA-256",
+        sasl_plain_username=os.getenv("KAFKA_USERNAME"),
+        sasl_plain_password=os.getenv("KAFKA_PASSWORD"),
         value_serializer=lambda v: json.dumps(v).encode("utf-8")
     )
 
@@ -32,9 +36,13 @@ def ask(query: Query):
 def get_result(job_id: str):
     c = KC(
         "test-responses",      
-        bootstrap_servers="kafka:9092",
+        bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
+        security_protocol="SASL_SSL",
+        sasl_mechanism="SCRAM-SHA-256",
+        sasl_plain_username=os.getenv("KAFKA_USERNAME"),
+        sasl_plain_password=os.getenv("KAFKA_PASSWORD"),
         auto_offset_reset="earliest",
-        consumer_timeout_ms=3000,  # wait max 3 seconds
+        consumer_timeout_ms=3000,
         value_deserializer=lambda v: json.loads(v.decode("utf-8"))
     )
     # Search all messages for matching job_id
